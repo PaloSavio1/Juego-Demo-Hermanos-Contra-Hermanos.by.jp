@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hermanos contra Hermanos | TCG Distópico</title>
+  <meta name="description" content="Juego socio-cultural político argentino. Tecnócratas vs Disidentes. Legislado por Leyes Jpirísticas.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Rajdhani:wght@400;600;700&display=swap" rel="stylesheet">
+  
+  <style>
+    :root {
+      --bg-color: #0b0d12;
+      --card-bg: rgba(18, 22, 31, 0.85);
+      --border-metal: #2a3245;
+      --border-glow: #3b475d;
+      --text-main: #e0e6ed;
+      --text-muted: #94a3b8;
+      
+      /* Facciones y Neón */
+      --tecnocrata: #00f0ff;
+      --tecnocrata-glow: rgba(0, 240, 255, 0.4);
+      --disidente: #ff2a5f;
+      --disidente-glow: rgba(255, 42, 95, 0.4);
+      --neutral-gold: #ffb703;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Rajdhani', sans-serif;
+      background-color: var(--bg-color);
+      color: var(--text-main);
+      line-height: 1.6;
+      background-image: 
+        radial-gradient(circle at 15% 20%, rgba(0, 240, 255, 0.06) 0%, transparent 40%),
+        radial-gradient(circle at 85% 80%, rgba(255, 42, 95, 0.06) 0%, transparent 40%),
+        linear-gradient(to bottom, #07080b, #0d1017);
+      background-attachment: fixed;
+    }
+
+    /* Header Cyberpunk */
+    header {
+      background: linear-gradient(180deg, #040507 0%, rgba(13, 16, 23, 0.85) 100%);
+      border-bottom: 2px solid var(--border-metal);
+      padding: 60px 20px 40px;
+      text-align: center;
+      position: relative;
+    }
+
+    header::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 50%;
+      transform: translateX(-50%);
+      width: 100%; max-width: 1200px;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, var(--tecnocrata), var(--disidente), transparent);
+    }
+
+    h1 {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 2.8rem;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: 3px;
+      background: linear-gradient(90deg, var(--tecnocrata), #ffffff, var(--disidente));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      text-shadow: 0 0 20px rgba(255, 255, 255, 0.2);
+      margin-bottom: 10px;
+    }
+
+    header p {
+      font-size: 1.2rem;
+      color: var(--text-muted);
+      letter-spacing: 2px;
+      text-transform: uppercase;
+    }
+
+    /* Navegación Fija */
+    nav {
+      background: rgba(10, 12, 18, 0.95);
+      border-bottom: 1px solid var(--border-metal);
+      padding: 15px;
+      text-align: center;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      backdrop-filter: blur(8px);
+    }
+
+    nav a {
+      color: var(--text-main);
+      margin: 0 12px;
+      text-decoration: none;
+      font-family: 'Orbitron', sans-serif;
+      font-size: 0.85rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      transition: all 0.3s ease;
+      letter-spacing: 1px;
+    }
+
+    nav a:hover {
+      color: var(--tecnocrata);
+      text-shadow: 0 0 8px var(--tecnocrata-glow);
+    }
+
+    /* Layout Principal */
+    section {
+      padding: 50px 20px;
+      max-width: 1100px;
+      margin: auto;
+    }
+
+    h2 {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 1.8rem;
+      color: #fff;
+      margin-bottom: 20px;
+      text-transform: uppercase;
+      border-left: 4px solid var(--neutral-gold);
+      padding-left: 12px;
+      letter-spacing: 1px;
+    }
+
+    .card {
+      background: var(--card-bg);
+      border: 1px solid var(--border-metal);
+      border-radius: 6px;
+      padding: 25px;
+      margin-bottom: 25px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+      backdrop-filter: blur(5px);
+      position: relative;
+    }
+
+    .card::after {
+      content: '';
+      position: absolute;
+      bottom: 0; right: 0;
+      width: 15px; height: 15px;
+      border-right: 2px solid var(--neutral-gold);
+      border-bottom: 2px solid var(--neutral-gold);
+    }
+
+    /* Exhibición del Mapa */
+    .map-container {
+      position: relative;
+      border: 2px solid var(--border-metal);
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 0 25px rgba(0, 0, 0, 0.8), 0 0 15px rgba(0, 240, 255, 0.1);
+      transition: transform 0.3s ease, border-color 0.3s ease;
+    }
+
+    .map-container:hover {
+      border-color: var(--neutral-gold);
+    }
+
+    .map-container img {
+      width: 100%;
+      height: auto;
+      display: block;
+    }
+
+    /* Grid de Cartas */
+    .cards-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+      gap: 20px;
+      margin-top: 25px;
+    }
+
+    .card-item {
+      background: #07090e;
+      border: 1px solid var(--border-metal);
+      border-radius: 8px;
+      padding: 10px;
+      text-align: center;
+      transition: all 0.3s ease;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.5);
+    }
+
+    .card-item:hover {
+      transform: translateY(-5px);
+      border-color: var(--tecnocrata);
+      box-shadow: 0 8px 20px var(--tecnocrata-glow);
+    }
+
+    .card-item img {
+      width: 100%;
+      height: auto;
+      border-radius: 4px;
+      display: block;
+      margin-bottom: 10px;
+    }
+
+    .card-item h4 {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 1rem;
+      color: var(--neutral-gold);
+      margin-bottom: 5px;
+    }
+
+    .card-item p {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+    }
+
+    /* Grid Facciones */
+    .facciones-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+      margin-top: 20px;
+    }
+
+    @media (max-width: 768px) {
+      .facciones-grid { grid-template-columns: 1fr; }
+    }
+
+    .fac-box {
+      padding: 20px;
+      border-radius: 4px;
+      background: rgba(5, 7, 10, 0.6);
+    }
+
+    .fac-box.tecnocrata {
+      border-top: 3px solid var(--tecnocrata);
+      box-shadow: inset 0 0 15px rgba(0, 240, 255, 0.05);
+    }
+
+    .fac-box.disidente {
+      border-top: 3px solid var(--disidente);
+      box-shadow: inset 0 0 15px rgba(255, 42, 95, 0.05);
+    }
+
+    .fac-box h3 {
+      font-family: 'Orbitron', sans-serif;
+      margin-bottom: 10px;
+    }
+
+    .fac-box.tecnocrata h3 { color: var(--tecnocrata); }
+    .fac-box.disidente h3 { color: var(--disidente); }
+
+    /* Tabla de Estaciones */
+    .table-container { overflow-x: auto; }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+      text-align: left;
+    }
+
+    th, td {
+      padding: 12px 15px;
+      border-bottom: 1px solid var(--border-metal);
+    }
+
+    th {
+      font-family: 'Orbitron', sans-serif;
+      background-color: rgba(255, 255, 255, 0.03);
+      color: var(--neutral-gold);
+      font-size: 0.9rem;
+    }
+
+    tr:hover { background-color: rgba(255, 255, 255, 0.02); }
+
+    /* Listas y Citas */
+    ul { list-style-type: none; }
+    ul li {
+      position: relative;
+      padding-left: 20px;
+      margin-bottom: 10px;
+    }
+    ul li::before {
+      content: '►';
+      position: absolute;
+      left: 0;
+      color: var(--neutral-gold);
+      font-size: 0.8rem;
+    }
+
+    .quote-box {
+      border-left: 3px solid var(--disidente);
+      background: rgba(255, 42, 95, 0.05);
+      padding: 15px 20px;
+      margin-top: 15px;
+      font-style: italic;
+      color: #f1f5f9;
+    }
+
+    footer {
+      background: #040507;
+      border-top: 1px solid var(--border-metal);
+      color: var(--text-muted);
+      text-align: center;
+      padding: 30px 20px;
+      margin-top: 60px;
+      font-size: 0.9rem;
+    }
+
+    footer p span {
+      color: var(--neutral-gold);
+      font-weight: 600;
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>Hermanos contra Hermanos</h1>
+  <p>Un juego socio-cultural político argentino</p>
+</header>
+
+<nav>
+  <a href="#descripcion">Descripción</a>
+  <a href="#mapa">Tablero</a>
+  <a href="#cartas">Cartas</a>
+  <a href="#facciones">Facciones</a>
+  <a href="#normas">Normas</a>
+  <a href="#estaciones">Estaciones</a>
+  <a href="#legislacion">Legislación</a>
+</nav>
+
+<section id="descripcion">
+  <h2>Descripción del Proyecto</h2>
+  <div class="card">
+    <p><strong>Hermanos contra Hermanos</strong> es un juego táctico-narrativo socio-cultural político argentino donde Tecnócratas y Disidentes se enfrentan en un tablero polarizado. Cada carta representa sucesos sociales, económicos o giros históricos que alteran el equilibrio del núcleo.</p>
+  </div>
+</section>
+
+<!-- SECCIÓN TABLERO DE JUEGO -->
+<section id="mapa">
+  <h2>Tablero Oficial de Juego</h2>
+  <div class="card">
+    <p style="margin-bottom: 15px;">El campo de batalla dividido en zonas estratégicas: Zona Tecnócrata, Zona Disidente, Rutas de Conflicto y el Núcleo Central.</p>
+    <div class="map-container">
+      <img src="mapa1.png" alt="Tablero Oficial Hermanos contra Hermanos">
+    </div>
+  </div>
+</section>
+
+<!-- SECCIÓN CARTAS DE EXHIBICIÓN -->
+<section id="cartas">
+  <h2>Cartas de Exhibición</h2>
+  <div class="card">
+    <p>Algunas de las unidades y sucesos que alteran el destino de la partida:</p>
+    
+    <div class="cards-grid">
+      <!-- Carta 1 -->
+      <div class="card-item">
+        <img src="assassinsdisident.jpeg" alt="Asesino Disidente">
+        <h4>Asesino Disidente</h4>
+        <p>Unidad / Agente Disidente</p>
+      </div>
+
+      <!-- Carta 2 -->
+      <div class="card-item">
+        <img src="Gemini_Generated_Image_4v7g784v7g784v7g.jpeg" alt="Dilema de la Teoría de las Cuerdas">
+        <h4>Dilema de Cuerdas</h4>
+        <p>Evento / Tecnócrata</p>
+      </div>
+
+      <!-- Carta 3 -->
+      <div class="card-item">
+        <img src="festejoceldas1.jpeg" alt="Celebración en las Celdas">
+        <h4>Celebración Celdas</h4>
+        <p>Evento / Purga & Protección</p>
+      </div>
+
+      <!-- Carta 4 -->
+      <div class="card-item">
+        <img src="Gemini_Generated_Image_5cl8tt5cl8tt5cl8.jpeg" alt="Núcleo Errático">
+        <h4>Núcleo Errático</h4>
+        <p>Constructo Anómalo</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="facciones">
+  <h2>Facciones y Núcleo</h2>
+  <div class="card">
+    <p>El <strong>Núcleo Central</strong> acumula rasgos por turno. Si un rasgo queda en negativo, potencia al opuesto. Si el núcleo llega a 0, se rompe → victoria del rival.</p>
+    
+    <div class="facciones-grid">
+      <div class="fac-box tecnocrata">
+        <h3>Tecnócratas</h3>
+        <p><strong>Filosofía:</strong> Progresismo / Individualismo. Camino del lobo de Wall Street argentino, buscando el ideal occidental.</p>
+        <p><strong>Recurso Clave:</strong> Acumulan <em>Infamia</em>.</p>
+      </div>
+      <div class="fac-box disidente">
+        <h3>Disidentes</h3>
+        <p><strong>Filosofía:</strong> Lealtad / Caos / Liberación. Los liminales: dentro pero en los márgenes, resistencia y emancipación.</p>
+        <p><strong>Recurso Clave:</strong> Acumulan <em>Honor</em>.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="normas">
+  <h2>Normas de Juego</h2>
+  <div class="card">
+    <ul>
+      <li><strong>Zona de despliegue:</strong> 4 slots por jugador. Se coloca 1 carta por turno.</li>
+      <li><strong>Progresión de turnos:</strong> Cada turno equivale a un día político. Se ganan 25 puntos (Infamia/Honor) para activar efectos o potenciar pasivas.</li>
+      <li><strong>Tipos de cartas:</strong> <em>Pasivas</em> (condiciones estructurales), <em>Normales</em> (sucesos puntuales) y <em>De suceso</em> (conflictos/beneficios inmediatos).</li>
+    </ul>
+  </div>
+</section>
+
+<section id="estaciones">
+  <h2>Ciclo de Estaciones</h2>
+  <div class="card">
+    <p>Cada <strong>4 turnos</strong> cambia la estación, alterando las condiciones del mapa:</p>
+    <div class="table-container">
+      <table>
+        <thead>
+          <tr>
+            <th>Estación</th>
+            <th>Efecto Climático / Político</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Primavera</strong></td>
+            <td>Alianzas y tratados (+10 resistencia).</td>
+          </tr>
+          <tr>
+            <td><strong>Verano</strong></td>
+            <td>Conflictos intensificados (+1 ataque).</td>
+          </tr>
+          <tr>
+            <td><strong>Otoño</strong></td>
+            <td>Desgaste social (−5 fuerza en pasivas).</td>
+          </tr>
+          <tr>
+            <td><strong>Invierno</strong></td>
+            <td>Ingreso reducido a 15 puntos; cartas que suman ahora restan. El invierno fuerza equilibrio y riesgo de ruptura.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<section id="legislacion">
+  <h2>Temática & Leyes Jpirísticas</h2>
+  <div class="card">
+    <p>El juego refleja el dualismo argentino: Unitarios vs Federales, Occidentales vs Orientales, osos polares vs pingüinos. Humor, conflicto y narrativa épica. No existe la muerte, solo la rendición: un hermano se impone sobre el otro.</p>
+    
+    <div class="quote-box">
+      <p><strong>Condición de victoria: "Caín"</strong></p>
+      <p>El núcleo roto equivale a derrota inmediata. El final lleva el título "Caín" → no por matar al hermano, sino por venderse a los de afuera. <em>"Los devoraron los de afuera."</em></p>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <p>&copy; 2026 <strong>Hermanos contra Hermanos</strong>. Resguardado por las <span>Leyes Jpirísticas</span>.</p>
+</footer>
+
+</body>
+</html>
